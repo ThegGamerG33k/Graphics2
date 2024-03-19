@@ -136,6 +136,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\BillboardCollection.cpp" />
+    <ClCompile Include="framework\BlitSquare.cpp" />
     <ClCompile Include="framework\BlurrableFramebuffer.cpp" />
     <ClCompile Include="framework\Buffers.cpp" />
     <ClCompile Include="framework\Camera.cpp" />
@@ -178,6 +180,8 @@
     <ClCompile Include="framework\vkhelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\BillboardCollection.h" />
+    <ClInclude Include="framework\BlitSquare.h" />
     <ClInclude Include="framework\BlurrableFramebuffer.h" />
     <ClInclude Include="framework\Buffers.h" />
     <ClInclude Include="framework\Camera.h" />
@@ -228,6 +232,8 @@
     <ClInclude Include="shaders\importantconstants.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\billboard.frag" />
+    <None Include="shaders\billboard.vert" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
     <None Include="shaders\shadow.frag" />

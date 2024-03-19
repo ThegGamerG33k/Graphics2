@@ -118,7 +118,9 @@ void setup(Globals* globs)
             DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
                                 METALLICROUGHNESS_TEXTURE_SLOT),
             DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                ENVMAP_TEXTURE_SLOT)
+                                ENVMAP_TEXTURE_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
+                                BILLBOARD_TEXTURE_SLOT),
 
         }
     );
@@ -165,6 +167,37 @@ void setup(Globals* globs)
         UNIFORM_SLOT,
         "shaders/uniforms.txt",
         "main uniforms"
+    );
+
+    globs->billboardCollection = new BillboardCollection(
+        globs->ctx,
+        globs->vertexManager,
+        {
+            {-1.0f, 0.0f, 0.0f, 1.0f},
+            {-0.5f, 0.0f, 0.0f, 1.0f},
+            {0.5f, 0.0f, 0.0f, 1.0f},
+            {-1.0f, 0.5f, 0.0f, 1.0f},
+            {-0.5f, 0.5f, 0.0f, 1.0f},
+            {0.5f, 0.5f, 0.0f, 1.0f},
+            {-1.0f, 1.0f, 0.0f, 1.0f},
+            {-0.5f, 1.0f, 0.0f, 1.0f},
+            {0.5f, 1.0f, 0.0f, 1.0f},
+            {1.0f, 1.0f, 0.0f, 1.0f}
+        },
+        ImageManager::load("assets/nova.png")
+    );
+
+    globs->pipelineDrawBillboards = new GraphicsPipeline(
+        globs->ctx,
+        "draw billboards",
+        globs->pipelineLayout,
+        PipelineOption{ .shader = ShaderManager::load("shaders/billboard.vert") },
+        PipelineOption{ .shader = ShaderManager::load("shaders/billboard.frag") },
+        PipelineOption{ .depthWriteEnable = VK_FALSE },
+        PipelineOption{ .blendEnable = VK_TRUE },
+        PipelineOption{ .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA },
+        PipelineOption{ .dstColorBlendFactor = VK_BLEND_FACTOR_ONE },   //<---
+        PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
     );
 
     globs->room = gltf::load("assets/kitchen.glb",globs->vertexManager);

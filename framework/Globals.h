@@ -21,6 +21,7 @@ class DescriptorSet;
 class DescriptorSetFactory;
 class PipelineLayout;
 class Image;
+class BillboardCollection;
 
 
 namespace gltf{
@@ -35,12 +36,14 @@ class Globals{
     bool keepLooping=true;
     VulkanContext* ctx;
     bool mouseLook = true;
+    BillboardCollection* billboardCollection;
     Camera* camera;
     Text* text;
     Framebuffer* framebuffer;
     DescriptorSet* descriptorSet;
     VertexManager* vertexManager;
     Uniforms* uniforms;
+    GraphicsPipeline* pipelineDrawBillboards;
     Pipeline* pipeline;
     PushConstants* pushConstants;
     std::vector<gltf::Mesh*> room;
