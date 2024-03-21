@@ -3,7 +3,7 @@
 #include "vkhelpers.h"
 #include "math2801.h"
 
-class BlitSquare;
+class BatchSquare;
 class Buffer;
 class Image;
 class DescriptorSet;
@@ -12,7 +12,7 @@ class VertexManager;
 class BillboardCollection {
 public:
 
-    BillboardCollection(VulkanContext* ctx_,
+    BillboardCollection(VulkanContext* ctx,
         VertexManager* vertexManager,
         const std::vector<math2801::vec4>& positions,
         Image* img
@@ -22,13 +22,10 @@ public:
         DescriptorSet* descriptorSet
     );
 
-    void drawInstanced(VkCommandBuffer cmd,
-        unsigned numInstances);
-
     unsigned numBillboards;
     Image* img;
-    BlitSquare* blitSquare;
+    BatchSquare* batchSquare;
     VkBufferView positionView;
     Buffer* positions;
-    //...data items...
+    VulkanContext* ctx;
 };

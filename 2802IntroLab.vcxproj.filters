@@ -141,6 +141,9 @@
     <ClCompile Include="framework\BlitSquare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="framework\BatchSquare.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\BlurrableFramebuffer.h">
@@ -291,6 +294,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="framework\BlitSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\BatchSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

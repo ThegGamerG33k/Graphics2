@@ -1,6 +1,6 @@
 #include "importantconstants.h"
 
-#define MAX_LIGHTS 24
+#define MAX_LIGHTS 1
 
 
 layout(set=0,binding=UNIFORM_SLOT,std140,row_major) uniform UBO{

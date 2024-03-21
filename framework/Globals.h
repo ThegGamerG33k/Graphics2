@@ -22,6 +22,7 @@ class DescriptorSetFactory;
 class PipelineLayout;
 class Image;
 class BillboardCollection;
+class GraphicsPipeline;
 
 
 namespace gltf{

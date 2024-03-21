@@ -1,5 +1,6 @@
 #include "Globals.h"   
 #include "Framework.h"
+#include "BillboardCollection.h"
 #include "shaders/importantconstants.h"
 #include "Camera.h"
 #include "Light.h"
@@ -200,8 +201,8 @@ void setup(Globals* globs)
         PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
     );
 
-    globs->room = gltf::load("assets/kitchen.glb",globs->vertexManager);
-    auto lights = gltf::getLights("assets/kitchen.glb");
+    globs->room = gltf::load("assets/room3.glb",globs->vertexManager);
+    auto lights = gltf::getLights("assets/room3.glb");
     for( Light L : lights ){
 
         //xyz=position if positional; direction if directional. w=flag
