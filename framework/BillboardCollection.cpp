@@ -49,7 +49,7 @@ void BillboardCollection::draw(VkCommandBuffer cmd,
     descriptorSet->setSlot(BILLBOARD_TEXTURE_SLOT, this->positionView);
     descriptorSet->bind(cmd);
     //we don't want blitSquare to set images, so we pass in null
-    this->batchSquare->drawInstanced(cmd, this->numBillboards);
+    this->batchSquare->drawInstanced(cmd, this->numBillboards / BILLBOARD_BATCH_SIZE);
 
     //for Renderdoc debugging
     ctx->endCmdRegion(cmd);

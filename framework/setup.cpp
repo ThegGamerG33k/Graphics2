@@ -170,21 +170,16 @@ void setup(Globals* globs)
         "main uniforms"
     );
 
+    std::vector<vec4> rand_pos;
+    for (int i = 0; i < 1024; i++)
+    {
+        rand_pos.push_back(vec4(rand() % 10 + (-5), rand() % 10, rand() % 10, 1));
+    }
+
     globs->billboardCollection = new BillboardCollection(
         globs->ctx,
         globs->vertexManager,
-        {
-            {-1.0f, 0.0f, 0.0f, 1.0f},
-            {-0.5f, 0.0f, 0.0f, 1.0f},
-            {0.5f, 0.0f, 0.0f, 1.0f},
-            {-1.0f, 0.5f, 0.0f, 1.0f},
-            {-0.5f, 0.5f, 0.0f, 1.0f},
-            {0.5f, 0.5f, 0.0f, 1.0f},
-            {-1.0f, 1.0f, 0.0f, 1.0f},
-            {-0.5f, 1.0f, 0.0f, 1.0f},
-            {0.5f, 1.0f, 0.0f, 1.0f},
-            {1.0f, 1.0f, 0.0f, 1.0f}
-        },
+        rand_pos,
         ImageManager::load("assets/nova.png")
     );
 
@@ -201,8 +196,8 @@ void setup(Globals* globs)
         PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
     );
 
-    globs->room = gltf::load("assets/room3.glb",globs->vertexManager);
-    auto lights = gltf::getLights("assets/room3.glb");
+    globs->room = gltf::load("assets/room6.glb",globs->vertexManager);
+    auto lights = gltf::getLights("assets/room6.glb");
     for( Light L : lights ){
 
         //xyz=position if positional; direction if directional. w=flag
