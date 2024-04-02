@@ -173,7 +173,7 @@ void setup(Globals* globs)
     std::vector<vec4> rand_pos;
     for (int i = 0; i < 1024; i++)
     {
-        rand_pos.push_back(vec4(rand() % 10 + (-5), rand() % 10, rand() % 10, 1));
+        rand_pos.push_back(vec4(-5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(5-(-5))), -5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (5 - (-5))), -5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (5 - (-5))), 1));
     }
 
     globs->billboardCollection = new BillboardCollection(
