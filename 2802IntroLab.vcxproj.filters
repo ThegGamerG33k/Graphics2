@@ -144,6 +144,9 @@
     <ClCompile Include="framework\BatchSquare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="framework\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\BlurrableFramebuffer.h">
@@ -327,12 +330,18 @@
     <None Include="shaders\billboard.vert">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="shaders\particle.comp">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\pushconstants.txt">
       <Filter>Header Files</Filter>
     </Text>
     <Text Include="shaders\uniforms.txt">
+      <Filter>Header Files</Filter>
+    </Text>
+    <Text Include="shaders\particlePushConstants.txt">
       <Filter>Header Files</Filter>
     </Text>
   </ItemGroup>

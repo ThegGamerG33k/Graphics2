@@ -2,17 +2,18 @@
 #include "Framework.h"
 #include <vector>
 #include "shaders/importantconstants.h"
+#include "math2801.h"
 
 using namespace math2801;
 
-BatchSquare::BatchSquare(VertexManager* vertexManager) {
+BatchSquare::BatchSquare(VertexManager* vertexManager, math2801::vec2 size); {
     std::vector<vec3> P;
     int x = 0;
     for (int i = 0; i < BILLBOARD_BATCH_SIZE; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            P.push_back(vec3(x, 0, 0));
+            P.push_back(vec3(i, size.x, size.y));
         }
         x++;
 

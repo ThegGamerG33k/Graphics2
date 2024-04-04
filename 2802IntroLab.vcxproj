@@ -163,6 +163,7 @@
     <ClCompile Include="framework\math2801.cpp" />
     <ClCompile Include="framework\mischelpers.cpp" />
     <ClCompile Include="framework\parseMembers.cpp" />
+    <ClCompile Include="framework\ParticleSystem.cpp" />
     <ClCompile Include="framework\Pipeline.cpp" />
     <ClCompile Include="framework\PipelineLayout.cpp" />
     <ClCompile Include="framework\platform.cpp" />
@@ -238,6 +239,7 @@
     <None Include="shaders\billboard.vert" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
+    <None Include="shaders\particle.comp" />
     <None Include="shaders\shadow.frag" />
     <None Include="shaders\shadow.vert" />
     <None Include="shaders\text.frag" />
@@ -246,6 +248,7 @@
     <None Include="sky.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="shaders\particlePushConstants.txt" />
     <Text Include="shaders\pushconstants.txt" />
     <Text Include="shaders\uniforms.txt" />
   </ItemGroup>

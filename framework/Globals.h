@@ -23,6 +23,7 @@ class PipelineLayout;
 class Image;
 class BillboardCollection;
 class GraphicsPipeline;
+class ParticleSystem;
 
 
 namespace gltf{
@@ -40,6 +41,7 @@ class Globals{
     BillboardCollection* billboardCollection;
     Camera* camera;
     Text* text;
+    ParticleSystem* particleSystem;
     Framebuffer* framebuffer;
     DescriptorSet* descriptorSet;
     VertexManager* vertexManager;

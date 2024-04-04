@@ -71,6 +71,8 @@ void draw(Globals* globs)
 
     globs->text->draw(cmd);
 
+    globs->particleSystem->draw(cmd);
+
     globs->framebuffer->endRenderPass(cmd);
     vkEndCommandBuffer(cmd);
 

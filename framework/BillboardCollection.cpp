@@ -12,16 +12,18 @@
 BillboardCollection::BillboardCollection(
     VulkanContext* ctx,
     VertexManager* vertexManager,
-    const std::vector<math2801::vec4>& positions_,
-    Image* img_)
+    const std::vector<math2801::vec4>& positions,
+    math2801::vec2 size,        //new
+    Image* img_
 {
-    if (positions_.size() % BILLBOARD_BATCH_SIZE) {
+    if (positions.size() % BILLBOARD_BATCH_SIZE) {
         //fatal() is in consoleoutput.h
-        fatal("Bad position count:", positions_.size(),
+        fatal("Bad position count:", positions.size(),
             "is not a multiple of", BILLBOARD_BATCH_SIZE);
     }
-    this->positions = new DeviceLocalBuffer(ctx, positions_,
-        VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
+    this->positions = new DeviceLocalBuffer(ctx, positions,
+        VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT |
+        VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
         "BillboardCollection positions"
     );
     this->positionView = this->positions->makeView(
@@ -29,8 +31,8 @@ BillboardCollection::BillboardCollection(
         "bb positionView"
     );
     this->img = img_;
-    this->numBillboards = (unsigned)positions_.size();
-    this->batchSquare = new BatchSquare(vertexManager);
+    this->numBillboards = (unsigned)positions.size();
+    this->batchSquare = new BatchSquare(vertexManager,size);
     this->ctx = ctx;
 
     CleanupManager::registerCleanupFunction([this]() {

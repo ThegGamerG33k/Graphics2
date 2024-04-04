@@ -12,9 +12,11 @@ class VertexManager;
 class BillboardCollection {
 public:
 
-    BillboardCollection(VulkanContext* ctx,
+    BillboardCollection(
+        VulkanContext* ctx,
         VertexManager* vertexManager,
         const std::vector<math2801::vec4>& positions,
+        math2801::vec2 size,        //new
         Image* img
     );
 

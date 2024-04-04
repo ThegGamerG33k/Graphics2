@@ -176,10 +176,9 @@ void setup(Globals* globs)
         rand_pos.push_back(vec4(rand() % 10 + (-5), rand() % 10, rand() % 10, 1));
     }
 
-    globs->billboardCollection = new BillboardCollection(
-        globs->ctx,
-        globs->vertexManager,
-        rand_pos,
+    globs->particleSystem = new ParticleSystem(
+        globs->ctx, globs->vertexManager,
+        256, vec3(0, 1, 0),
         ImageManager::load("assets/nova.png")
     );
 
