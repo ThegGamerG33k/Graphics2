@@ -215,6 +215,7 @@
     <ClInclude Include="framework\math2801.h" />
     <ClInclude Include="framework\mischelpers.h" />
     <ClInclude Include="framework\parseMembers.h" />
+    <ClInclude Include="framework\ParticleSystem.h" />
     <ClInclude Include="framework\Pipeline.h" />
     <ClInclude Include="framework\PipelineLayout.h" />
     <ClInclude Include="framework\platform.h" />

@@ -5,6 +5,7 @@
 #include "gltf.h"
 #include "Text.h"
 #include "BillboardCollection.h"
+#include "ParticleSystem.h"
 #include "..\shaders\importantconstants.h"
 
 void draw(Globals* globs)
@@ -69,9 +70,9 @@ void draw(Globals* globs)
         mat4::identity());
     globs->billboardCollection->draw(cmd, globs->descriptorSet);
 
-    globs->text->draw(cmd);
+    globs->particleSystem->draw(cmd, globs->descriptorSet);
 
-    globs->particleSystem->draw(cmd);
+    globs->text->draw(cmd);
 
     globs->framebuffer->endRenderPass(cmd);
     vkEndCommandBuffer(cmd);

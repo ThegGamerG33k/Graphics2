@@ -6,7 +6,7 @@
 
 using namespace math2801;
 
-BatchSquare::BatchSquare(VertexManager* vertexManager, math2801::vec2 size); {
+BatchSquare::BatchSquare(VertexManager* vertexManager, math2801::vec2 size) {
     std::vector<vec3> P;
     int x = 0;
     for (int i = 0; i < BILLBOARD_BATCH_SIZE; i++)

@@ -21,10 +21,9 @@ void main(){
     vec4 p = texelFetch( billboardPositions,
         gl_InstanceIndex*BILLBOARD_BATCH_SIZE + idx );
     lifeLeft = p.w;
+    p.w = 1.0;
 
     vec2 size = indexInfo.yz;
-
-    color.a *= smoothstep(0.0,0.5,lifeLeft):
 
 
     //put in world space

@@ -302,6 +302,9 @@
     <ClInclude Include="framework\BatchSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="framework\ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\main.frag">

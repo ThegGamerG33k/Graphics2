@@ -10,6 +10,7 @@ class Image;
 class BatchSquare {
 public:
     VertexManager::Info drawinfo;
+
     BatchSquare(VertexManager* vertexManager, math2801::vec2 size);
 
     BatchSquare(const BatchSquare&) = delete;

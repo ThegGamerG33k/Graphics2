@@ -14,7 +14,7 @@ BillboardCollection::BillboardCollection(
     VertexManager* vertexManager,
     const std::vector<math2801::vec4>& positions,
     math2801::vec2 size,        //new
-    Image* img_
+    Image* img_)
 {
     if (positions.size() % BILLBOARD_BATCH_SIZE) {
         //fatal() is in consoleoutput.h

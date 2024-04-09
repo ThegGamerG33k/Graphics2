@@ -7,6 +7,7 @@
 #include <SDL.h>
 #include "gltf.h"
 #include "Text.h"
+#include "ParticleSystem.h"
 
 void setup(Globals* globs)
 {
@@ -179,6 +180,14 @@ void setup(Globals* globs)
     globs->particleSystem = new ParticleSystem(
         globs->ctx, globs->vertexManager,
         256, vec3(0, 1, 0),
+        ImageManager::load("assets/nova.png")
+    );
+
+    globs->billboardCollection = new BillboardCollection(
+        globs->ctx,
+        globs->vertexManager,
+        rand_pos,
+        vec2(0.1, 0.1),
         ImageManager::load("assets/nova.png")
     );
 
