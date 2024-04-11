@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include "Globals.h"
 #include "imagedecode.h"
+#include "ParticleSystem.h"
 #include <iostream>
 #include <fstream>
 #include "Text.h"
@@ -75,7 +76,7 @@ void update(Globals* globs, float elapsed)
             }
         }
     }
-
+    globs->particleSystem->update(elapsed);
 
     if(globs->pressedKeys.contains(SDLK_w))
         globs->camera->strafeNoUpDown(0,0,elapsed);

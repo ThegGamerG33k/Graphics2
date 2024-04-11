@@ -25,6 +25,8 @@ void draw(Globals* globs)
 
     globs->text->update(cmd);
 
+    globs->particleSystem->compute(cmd);
+
     globs->framebuffer->beginRenderPassClearContents(cmd, 0.2f, 0.4f, 0.6f, 1.0f );
 
     globs->descriptorSet->setSlot(
@@ -68,7 +70,7 @@ void draw(Globals* globs)
     //with worldMatrix
     globs->pushConstants->set(cmd, "worldMatrix",
         mat4::identity());
-    globs->billboardCollection->draw(cmd, globs->descriptorSet);
+    //globs->billboardCollection->draw(cmd, globs->descriptorSet);
 
     globs->particleSystem->draw(cmd, globs->descriptorSet);
 

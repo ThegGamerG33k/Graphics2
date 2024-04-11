@@ -123,9 +123,6 @@ void ParticleSystem::update(float elapsed)
 
 void ParticleSystem::compute(VkCommandBuffer cmd)
 {
-    if (this->accumulated < PARTICLE_TIME_QUANTUM)
-        return;
-
     if (numParticles % WORKGROUP_SIZE != 0) {
         //fatal is in consoleoutput.h
         fatal("Error:", numParticles,
@@ -133,14 +130,19 @@ void ParticleSystem::compute(VkCommandBuffer cmd)
         );
     }
 
-    computeDescriptorSet->setSlot(0, this->billboardCollection->positionView);
-    computeDescriptorSet->setSlot(1, this->velocityView);
-    computeDescriptorSet->bind(cmd);
-    computePipeline->use(cmd);
-    computePushConstants->set(cmd, "startingPoint", this->startingPoint);
-    computePushConstants->set(cmd, "elapsed", PARTICLE_TIME_QUANTUM);
+    if (this->accumulated < PARTICLE_TIME_QUANTUM)
+        return;
+        
+
 
     while (this->accumulated >= PARTICLE_TIME_QUANTUM) {
+        computeDescriptorSet->setSlot(0, this->billboardCollection->positionView);
+        computeDescriptorSet->setSlot(1, this->velocityView);
+        computeDescriptorSet->bind(cmd);
+        computePipeline->use(cmd);
+        computePushConstants->set(cmd, "startingPoint", this->startingPoint);
+        computePushConstants->set(cmd, "elapsed", PARTICLE_TIME_QUANTUM);
+
         this->accumulated -= PARTICLE_TIME_QUANTUM;
         vkCmdDispatch(cmd,
             this->numParticles / WORKGROUP_SIZE,

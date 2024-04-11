@@ -11,7 +11,9 @@ layout(binding=0,rgba32f) uniform imageBuffer posData;
 layout(binding=1,rgba32f) uniform imageBuffer velData;
 
 
+
 void main(){
+    //uvec3 id = gl_GlobalInvocationID;
     uint id = gl_GlobalInvocationID.x;
     
     vec4 pos = imageLoad( posData, int(id) );

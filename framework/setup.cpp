@@ -177,6 +177,12 @@ void setup(Globals* globs)
         rand_pos.push_back(vec4(rand() % 10 + (-5), rand() % 10, rand() % 10, 1));
     }
 
+    std::vector<vec4> center;
+    for (int i = 0; i < 1024; i++)
+    {
+        center.push_back(vec4(0, 1, 0, 1));
+    }
+
     globs->particleSystem = new ParticleSystem(
         globs->ctx, globs->vertexManager,
         256, vec3(0, 1, 0),
@@ -186,7 +192,7 @@ void setup(Globals* globs)
     globs->billboardCollection = new BillboardCollection(
         globs->ctx,
         globs->vertexManager,
-        rand_pos,
+        center,
         vec2(0.1, 0.1),
         ImageManager::load("assets/nova.png")
     );
