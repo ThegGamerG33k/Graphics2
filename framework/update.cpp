@@ -9,6 +9,9 @@
 
 void update(Globals* globs, float elapsed)
 {
+
+    globs->elapsed += elapsed;
+
     SDL_Event ev;
     while(true){
         bool eventOccurred = SDL_PollEvent(&ev);

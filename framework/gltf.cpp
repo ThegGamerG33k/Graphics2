@@ -19,10 +19,10 @@ class Material{
   public:
     vec4 baseColorFactor;
     Image* baseColorTexture;
-    Image* normalTexture;
     vec3 emissiveFactor;
-    float normalFactor;
     Image* emissiveTexture;
+    float normalFactor;
+    Image* normalTexture;
     Image* metallicRoughnessTexture;
     float metallicFactor;
     float roughnessFactor;
@@ -36,9 +36,9 @@ class Primitive{
     Primitive( VertexManager* vertexManager,
                std::vector<vec3>& positions,
                std::vector<vec2>& texcoords,
-               std::vector<vec2>& texcoords2,
                std::vector<vec3>& normals,
                std::vector<vec4>& tangents,
+               std::vector<vec2>& texcoords2,
                std::vector<std::uint32_t>& indices,
                Material mtl)
     {
@@ -46,9 +46,9 @@ class Primitive{
         this->drawinfo = vertexManager->addIndexedData(
             "positions",positions,
             "texcoords", texcoords,
-            "texcoords2", texcoords2,
             "normals",normals,
             "tangents", tangents,
+            "texcoords2", texcoords2,
             "indices",indices
         );
         this->material = mtl;
@@ -57,14 +57,14 @@ class Primitive{
     void draw( VkCommandBuffer cmd, DescriptorSet* dset, PushConstants* pushc){
         dset->setSlot( BASE_TEXTURE_SLOT, this->material.baseColorTexture->view() );
         dset->setSlot( EMISSIVE_TEXTURE_SLOT, this->material.emissiveTexture->view() );
-        dset->setSlot(NORMAL_TEXTURE_SLOT, this->material.normalTexture->view());
-        dset->setSlot(METALLICROUGHNESS_TEXTURE_SLOT, this->material.metallicRoughnessTexture->view());
+        dset->setSlot( NORMAL_TEXTURE_SLOT, this->material.normalTexture->view() );
+        dset->setSlot( METALLICROUGHNESS_TEXTURE_SLOT, this->material.metallicRoughnessTexture->view() );
         dset->bind(cmd);
         pushc->set(cmd,"baseColorFactor",this->material.baseColorFactor);
         pushc->set(cmd,"emissiveFactor",this->material.emissiveFactor);
-        pushc->set(cmd, "normalFactor", this->material.normalFactor);
-        pushc->set(cmd, "metallicFactor", this->material.metallicFactor);
-        pushc->set(cmd, "roughnessFactor", this->material.roughnessFactor);
+        pushc->set(cmd,"normalFactor",this->material.normalFactor);
+        pushc->set(cmd,"metallicFactor",this->material.metallicFactor);
+        pushc->set(cmd,"roughnessFactor",this->material.roughnessFactor);
         vkCmdDrawIndexed(
             cmd,
             this->drawinfo.numIndices,
@@ -207,98 +207,82 @@ Image* loadTexture(const json11::Json& J, std::vector<char>& binaryData, int tex
     );
 }
 
-Material parseMaterial(const json11::Json& J, std::vector<char>& binaryData, int materialIndex)
+Material parseMaterial( const json11::Json& J, std::vector<char>& binaryData, int materialIndex )
 {
     json11::Json material = J["materials"][materialIndex];
     json11::Json metallicRoughness = material["pbrMetallicRoughness"];
 
     Material M;
-    if (metallicRoughness.hasKey("baseColorFactor")) {
-        M.baseColorFactor.x = metallicRoughness["baseColorFactor"][0];
-        M.baseColorFactor.y = metallicRoughness["baseColorFactor"][1];
-        M.baseColorFactor.z = metallicRoughness["baseColorFactor"][2];
-        M.baseColorFactor.w = metallicRoughness["baseColorFactor"][3];
-    }
-    else {
-        M.baseColorFactor = vec4(1, 1, 1, 1);
+    if( metallicRoughness.hasKey("baseColorFactor") ){
+        M.baseColorFactor.x =  metallicRoughness["baseColorFactor"][0];
+        M.baseColorFactor.y =  metallicRoughness["baseColorFactor"][1];
+        M.baseColorFactor.z =  metallicRoughness["baseColorFactor"][2];
+        M.baseColorFactor.w =  metallicRoughness["baseColorFactor"][3];
+    } else {
+        M.baseColorFactor = vec4(1,1,1,1);
     }
 
-    if (metallicRoughness.hasKey("baseColorTexture")) {
+    if(  metallicRoughness.hasKey("baseColorTexture") ){
         M.baseColorTexture = loadTexture(
             J, binaryData,
             metallicRoughness["baseColorTexture"]["index"]
         );
-    }
-    else {
+    } else {
         //default color = white
-        M.baseColorTexture = ImageManager::createSolidColorImage(1, 1, 1, 1);
+        M.baseColorTexture = ImageManager::createSolidColorImage(1,1,1,1);
     }
 
-    if (material.hasKey("emissiveFactor")) {
-        M.emissiveFactor.x = material["emissiveFactor"][0];
-        M.emissiveFactor.y = material["emissiveFactor"][1];
-        M.emissiveFactor.z = material["emissiveFactor"][2];
-    }
-    else {
-        M.emissiveFactor = vec3(0, 0, 0);
+    if( material.hasKey("emissiveFactor" ) ){
+        M.emissiveFactor.x =  material["emissiveFactor"][0];
+        M.emissiveFactor.y =  material["emissiveFactor"][1];
+        M.emissiveFactor.z =  material["emissiveFactor"][2];
+    } else {
+        M.emissiveFactor = vec3(0,0,0);
     }
 
-    if (material.hasKey("emissiveTexture")) {
+    if( material.hasKey("emissiveTexture")){
         M.emissiveTexture = loadTexture(
             J, binaryData, material["emissiveTexture"]["index"]
         );
-    }
-    else {
-        M.emissiveTexture = ImageManager::createSolidColorImage(1, 1, 1, 1);
+    } else {
+        M.emissiveTexture = ImageManager::createSolidColorImage(1,1,1,1);
     }
 
-    if (material.hasKey("normalTexture")) {
+    if( material.hasKey("normalTexture")){
         int idx = material["normalTexture"]["index"];
         M.normalTexture = loadTexture(J, binaryData, idx);
         json11::Json texture = J["textures"][idx];
         int sourceIndex = texture["source"];
         json11::Json image = J["images"][sourceIndex];
-        if (image.hasKey("scale"))
+        if( image.hasKey("scale") )
             M.normalFactor = image["scale"];
         else
             M.normalFactor = 1.0f;
-    }
-    else {
-        M.normalTexture = ImageManager::createSolidColorImage(0.5, 0.5, 1.0, 1.0);
-        M.normalFactor = 1.0f;
+    } else {
+        M.normalTexture = ImageManager::createSolidColorImage(0.5,0.5,1.0,1.0);
+        M.normalFactor=1.0f;
     }
 
-
-    
-    if (metallicRoughness.hasKey("metallicRoughnessTexture")) {
+    if( metallicRoughness.hasKey("metallicRoughnessTexture") ){
         M.metallicRoughnessTexture = loadTexture(
-            J, binaryData,
-            metallicRoughness["metallicRoughnessTexture"]["index"]
-        );
-    }
-    else {
-        //default color = white
-        M.metallicRoughnessTexture = ImageManager::createSolidColorImage(1, 1, 1, 1);
+                 J, binaryData,metallicRoughness["metallicRoughnessTexture"]["index"]);
+    } else{
+        M.metallicRoughnessTexture = ImageManager::createSolidColorImage(1.0,1.0,1.0,1.0);
     }
 
-    if (metallicRoughness.hasKey("metallicFactor")) {
+    if( metallicRoughness.hasKey("metallicFactor") ){
         M.metallicFactor = metallicRoughness["metallicFactor"];
-    }
-    else {
-        //default color = white
+    } else {
         M.metallicFactor = 1.0f;
     }
 
-    if (metallicRoughness.hasKey("roughnessFactor")) {
+    if( metallicRoughness.hasKey("roughnessFactor") ){
         M.roughnessFactor = metallicRoughness["roughnessFactor"];
-    }
-    else {
-        //default color = white
+    } else {
         M.roughnessFactor = 1.0f;
     }
 
     return M;
-    
 }
 
 Primitive* parsePrimitive(const json11::Json& J, std::vector<char>& binaryData, const json11::Json& primitive, VertexManager* vertexManager)
@@ -306,35 +290,35 @@ Primitive* parsePrimitive(const json11::Json& J, std::vector<char>& binaryData, 
     auto mtl = parseMaterial( J, binaryData, primitive["material"] );
     std::vector<vec3> positionData;
     parseAttribute( J, binaryData, primitive["attributes"]["POSITION"], positionData );
-
     std::vector<vec2> texcoordData;
     parseAttribute( J, binaryData, primitive["attributes"]["TEXCOORD_0"], texcoordData );
-
-    std::vector<vec2> texcoordData2;
-    if (primitive["attributes"].hasKey("TEXCOORD_1")) {
-        parseAttribute(J, binaryData, primitive["attributes"]["TEXCOORD_1"], texcoordData2);
-    }
-    else {
-        texcoordData2 = texcoordData;
-    }
-
     std::vector<vec3> normalData;
-    parseAttribute(J, binaryData, primitive["attributes"]["NORMAL"], normalData);
+    parseAttribute( J, binaryData, primitive["attributes"]["NORMAL"], normalData );
     std::vector<vec4> tangentData;
-    if (primitive["attributes"].hasKey("TANGENT"))
-        parseAttribute(J, binaryData, primitive["attributes"]["TANGENT"], tangentData);
-    else
+    if( primitive["attributes"].hasKey("TANGENT")){
+        parseAttribute( J, binaryData, primitive["attributes"]["TANGENT"], tangentData );
+    } else {
         tangentData.resize(positionData.size());
+    }
+
+    std::vector<vec2> texcoord2Data;
+    if( primitive["attributes"].hasKey("TEXCOORD_1")){
+        parseAttribute( J, binaryData, primitive["attributes"]["TEXCOORD_1"], texcoord2Data );
+    } else {
+        texcoord2Data = texcoordData;
+    }
+
+
     std::vector<std::uint32_t> indices;
     parseAttribute( J, binaryData, primitive["indices"], indices );
     return new Primitive(
         vertexManager,
         positionData,
         texcoordData,
-        texcoordData2,
         normalData,
         tangentData,
-        indices, 
+        texcoord2Data,
+        indices,
         mtl);
 }
 

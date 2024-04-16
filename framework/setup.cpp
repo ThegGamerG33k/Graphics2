@@ -1,40 +1,21 @@
-#include "Globals.h"   
+#include "Globals.h"
 #include "Framework.h"
-#include "BillboardCollection.h"
 #include "shaders/importantconstants.h"
 #include "Camera.h"
 #include "Light.h"
 #include <SDL.h>
 #include "gltf.h"
 #include "Text.h"
+#include "BlitSquare.h"
 
 void setup(Globals* globs)
 {
     ShaderManager::initialize(globs->ctx);
     ImageManager::initialize(globs->ctx);
-    globs->envmapImage = ImageManager::loadCube({
-        "assets/px.jpg",
-        "assets/nx.jpg",
-        "assets/py.jpg",
-        "assets/ny.jpg",
-        "assets/pz.jpg",
-        "assets/nz.jpg"
-        });
-
-    globs->skyboxImage = ImageManager::loadCube({
-        "assets/nebula1_0.jpg",
-        "assets/nebula1_1.jpg",
-        "assets/nebula1_2.jpg",
-        "assets/nebula1_3.jpg",
-        "assets/nebula1_4.jpg",
-        "assets/nebula1_5.jpg"
-        });
-    
 
     globs->keepLooping=true;
-    globs->framebuffer = new Framebuffer(globs->ctx);
-    
 
+    globs->framebuffer = new Framebuffer(globs->ctx);
 
     globs->nearestSampler = new Sampler( globs->ctx,
             VK_FILTER_NEAREST,
@@ -49,6 +30,12 @@ void setup(Globals* globs)
     globs->mipSampler = new Sampler( globs->ctx,
             VK_FILTER_LINEAR,
             VK_SAMPLER_ADDRESS_MODE_REPEAT,
+            true
+    );
+
+    globs->clampingMipSampler = new Sampler( globs->ctx,
+            VK_FILTER_LINEAR,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
             true
     );
 
@@ -78,51 +65,52 @@ void setup(Globals* globs)
                 .rate=VK_VERTEX_INPUT_RATE_VERTEX
             },
             VertexManager::Input{
-                .name = "texcoords2",
-                .format = VK_FORMAT_R32G32_SFLOAT,
-                .location = VS_INPUT_TEXCOORD2,
-                .rate = VK_VERTEX_INPUT_RATE_VERTEX
-            },
-            VertexManager::Input{
                 .name="normals",
                 .format=VK_FORMAT_R32G32B32_SFLOAT,
                 .location=VS_INPUT_NORMAL,
                 .rate=VK_VERTEX_INPUT_RATE_VERTEX
             },
             VertexManager::Input{
-                .name = "tangents",
-                .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                .location = VS_INPUT_TANGENT,
-                .rate = VK_VERTEX_INPUT_RATE_VERTEX
+                .name="tangents",
+                .format=VK_FORMAT_R32G32B32A32_SFLOAT,
+                .location=VS_INPUT_TANGENT,
+                .rate=VK_VERTEX_INPUT_RATE_VERTEX
+            },
+            VertexManager::Input{
+                .name="texcoords2",
+                .format=VK_FORMAT_R32G32_SFLOAT,
+                .location=VS_INPUT_TEXCOORD2,
+                .rate=VK_VERTEX_INPUT_RATE_VERTEX
             }
+
         }
     );
-
 
     globs->descriptorSetLayout = new DescriptorSetLayout(
         globs->ctx,
         {
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                UNIFORM_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                NEAREST_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                LINEAR_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                MIPMAP_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                BASE_TEXTURE_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                EMISSIVE_TEXTURE_SLOT ),
-            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                NORMAL_TEXTURE_SLOT),
-            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                METALLICROUGHNESS_TEXTURE_SLOT),
-            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                ENVMAP_TEXTURE_SLOT),
-            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
-                                BILLBOARD_TEXTURE_SLOT),
-
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+                                UNIFORM_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER, 
+                                NEAREST_SAMPLER_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER, 
+                                LINEAR_SAMPLER_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER, 
+                                MIPMAP_SAMPLER_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER, 
+                                CLAMPING_MIPMAP_SAMPLER_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 
+                                BASE_TEXTURE_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 
+                                EMISSIVE_TEXTURE_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 
+                                NORMAL_TEXTURE_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 
+                                METALLICROUGHNESS_TEXTURE_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 
+                                ENVMAP_TEXTURE_SLOT), 
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 
+                                BILLBOARD_TEXTURE_SLOT)
         }
     );
 
@@ -146,43 +134,6 @@ void setup(Globals* globs)
         PipelineOption{.vertexInputState=globs->vertexManager->inputState}
     );
 
-    globs->skyboxPipeline = new GraphicsPipeline(
-        globs->ctx,
-        "skybox pipe",
-        globs->pipelineLayout,
-        PipelineOption{ .shader = ShaderManager::load("shaders/sky.vert") },
-        PipelineOption{ .shader = ShaderManager::load("shaders/sky.frag") },
-        PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
-    );
-
-    globs->descriptorSetFactory = new DescriptorSetFactory(
-        globs->ctx,
-       "main",
-        0,      //binding point
-        globs->pipelineLayout
-    );
-    globs->descriptorSet = globs->descriptorSetFactory->make();
-
-    globs->uniforms = new Uniforms(
-        globs->ctx,
-        UNIFORM_SLOT,
-        "shaders/uniforms.txt",
-        "main uniforms"
-    );
-
-    std::vector<vec4> rand_pos;
-    for (int i = 0; i < 1024; i++)
-    {
-        rand_pos.push_back(vec4(-5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(5-(-5))), -5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (5 - (-5))), -5 + static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (5 - (-5))), 1));
-    }
-
-    globs->billboardCollection = new BillboardCollection(
-        globs->ctx,
-        globs->vertexManager,
-        rand_pos,
-        ImageManager::load("assets/nova.png")
-    );
-
     globs->pipelineDrawBillboards = new GraphicsPipeline(
         globs->ctx,
         "draw billboards",
@@ -194,6 +145,42 @@ void setup(Globals* globs)
         PipelineOption{ .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA },
         PipelineOption{ .dstColorBlendFactor = VK_BLEND_FACTOR_ONE },   //<---
         PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
+    );
+
+    globs->firePipe = new GraphicsPipeline(
+        globs->ctx,
+        "blit pipe",
+        globs->pipelineLayout,
+        PipelineOption{.shader=ShaderManager::load("shaders/fire.vert")},
+        PipelineOption{.shader=ShaderManager::load("shaders/fire.frag")},
+        PipelineOption{.vertexInputState=globs->vertexManager->inputState},
+        PipelineOption{.blendEnable=VK_TRUE},
+        PipelineOption{.srcColorBlendFactor=VK_BLEND_FACTOR_SRC_ALPHA},
+        PipelineOption{.dstColorBlendFactor=VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA}
+    );
+
+    globs->skyboxPipeline = new GraphicsPipeline(
+        globs->ctx,
+        "skybox pipe",
+        globs->pipelineLayout,
+        PipelineOption{.shader=ShaderManager::load("shaders/sky.vert")},
+        PipelineOption{.shader=ShaderManager::load("shaders/sky.frag")},
+        PipelineOption{.vertexInputState=globs->vertexManager->inputState}
+    );
+
+    globs->descriptorSetFactory = new DescriptorSetFactory(
+        globs->ctx,
+        "main",
+        0,      //binding point
+        globs->pipelineLayout
+    );
+    globs->descriptorSet = globs->descriptorSetFactory->make();
+
+    globs->uniforms = new Uniforms(
+        globs->ctx,
+        UNIFORM_SLOT,
+        "shaders/uniforms.txt",
+        "main uniforms"
     );
 
     globs->room = gltf::load("assets/room6.glb",globs->vertexManager);
@@ -223,18 +210,43 @@ void setup(Globals* globs)
         );
     }
 
+    globs->interiorEnvironmentMap = ImageManager::loadCube({
+        "assets/roomenvmap0.jpg",
+        "assets/roomenvmap1.jpg",
+        "assets/roomenvmap2.jpg",
+        "assets/roomenvmap3.jpg",
+        "assets/roomenvmap4.jpg",
+        "assets/roomenvmap5.jpg"
+    });
+
+    globs->skyboxEnvironmentMap = ImageManager::loadCube({
+        "assets/nebula1_0.jpg",
+        "assets/nebula1_1.jpg",
+        "assets/nebula1_2.jpg",
+        "assets/nebula1_3.jpg",
+        "assets/nebula1_4.jpg",
+        "assets/nebula1_5.jpg"
+    });
+
+
+    globs->cubeMesh = gltf::load("assets/cube.glb", globs->vertexManager)[0];
+
     globs->text = new Text(globs->ctx, globs->framebuffer,
         "assets/writing36.png",
         "assets/writing36.txt"
     );
 
-    globs->skyboxCube = gltf::load("assets/cube.glb", globs->vertexManager)[0];
+    globs->fireTexture = ImageManager::load("assets/flame3.png");
+    //globs->fireTexture = ImageManager::load("assets/fireramp.jpg");
+
+    globs->blitSquare = new BlitSquare(globs->vertexManager);
 
     globs->vertexManager->pushToGPU();
     ImageManager::pushToGPU();
     globs->descriptorSet->setSlot( NEAREST_SAMPLER_SLOT, globs->nearestSampler->sampler );
     globs->descriptorSet->setSlot( LINEAR_SAMPLER_SLOT, globs->linearSampler->sampler );
     globs->descriptorSet->setSlot( MIPMAP_SAMPLER_SLOT, globs->mipSampler->sampler );
+    globs->descriptorSet->setSlot( CLAMPING_MIPMAP_SAMPLER_SLOT, globs->clampingMipSampler->sampler );
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
     globs->mouseLook = true;

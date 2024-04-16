@@ -236,6 +236,8 @@
   <ItemGroup>
     <None Include="shaders\billboard.frag" />
     <None Include="shaders\billboard.vert" />
+    <None Include="shaders\fire.frag" />
+    <None Include="shaders\fire.vert" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
     <None Include="shaders\shadow.frag" />

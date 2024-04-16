@@ -327,6 +327,12 @@
     <None Include="shaders\billboard.vert">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="shaders\fire.frag">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="shaders\fire.vert">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\pushconstants.txt">

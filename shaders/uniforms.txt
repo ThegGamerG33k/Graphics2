@@ -15,4 +15,5 @@ layout(set=0,binding=UNIFORM_SLOT,std140,row_major) uniform UBO{
     vec4 cosSpotAngles[MAX_LIGHTS];
     vec4 spotDirection[MAX_LIGHTS];
 
+    float elapsed;
 };

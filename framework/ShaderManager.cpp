@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <filesystem>
+#include <cassert>
 
 // ref: https://vulkan.lunarg.com/doc/sdk/1.3.236.0/windows/spirv_toolchain.html
 // ref: https://github.com/KhronosGroup/glslang/blob/master/StandAlone/StandAlone.cpp

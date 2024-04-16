@@ -21,9 +21,10 @@ class DescriptorSet;
 class DescriptorSetFactory;
 class PipelineLayout;
 class Image;
+class BlitSquare;
+class BlurrableFramebuffer;
 class BillboardCollection;
 class GraphicsPipeline;
-
 
 namespace gltf{
   class Mesh;
@@ -37,15 +38,15 @@ class Globals{
     bool keepLooping=true;
     VulkanContext* ctx;
     bool mouseLook = true;
-    BillboardCollection* billboardCollection;
     Camera* camera;
     Text* text;
     Framebuffer* framebuffer;
     DescriptorSet* descriptorSet;
     VertexManager* vertexManager;
+    BillboardCollection* billboardCollection;
     Uniforms* uniforms;
-    GraphicsPipeline* pipelineDrawBillboards;
     Pipeline* pipeline;
+    GraphicsPipeline* pipelineDrawBillboards;
     PushConstants* pushConstants;
     std::vector<gltf::Mesh*> room;
     std::vector<vec4> lightPositionAndDirectionalFlag;
@@ -55,11 +56,19 @@ class Globals{
     Sampler* nearestSampler;
     Sampler* linearSampler;
     Sampler* mipSampler;
+    Sampler* clampingMipSampler;
     DescriptorSetLayout* descriptorSetLayout;
     PipelineLayout* pipelineLayout;
     DescriptorSetFactory* descriptorSetFactory;
+
     Pipeline* skyboxPipeline;
-    Image* envmapImage;
-    Image* skyboxImage;
-    gltf::Mesh* skyboxCube;
+    Image* interiorEnvironmentMap;
+    Image* skyboxEnvironmentMap;
+    gltf::Mesh* cubeMesh;
+
+    Image* fireTexture;
+    Pipeline* firePipe;
+    BlitSquare* blitSquare;
+    float elapsed=0.0f;
+
 };

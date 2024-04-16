@@ -970,8 +970,10 @@ std::tuple<int,int,std::string,std::vector<char> > VulkanContext::screenshot(VkI
 
     //Assuming it's bgra format...
     //swap to rgba
+    //and force alpha to 255
     for(int i=0;i<(int)cpubuffer.size();i+=4){
         std::swap(cpubuffer[i], cpubuffer[i+2] );
+        cpubuffer[i+3] = (char)255;
     }
 
     std::vector<char> pitched;

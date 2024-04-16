@@ -116,7 +116,6 @@ VertexManager::Info VertexManager::addIndexedDataHelper(std::vector<AttribInfo>&
     expected.insert("indices");
 
     std::vector<std::string> extras;
-    extras.reserve(supplied.size());
     std::set_difference(supplied.begin(),supplied.end(),
                         expected.begin(),expected.end(),
                         extras.begin()
