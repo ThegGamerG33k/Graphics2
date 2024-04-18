@@ -11,7 +11,7 @@ layout(location=VS_INPUT_NORMAL) in vec3 normal;
 layout(location=VS_INPUT_TANGENT) in vec4 tangent;
 
 layout(location=VS_OUTPUT_TEXCOORD) out vec2 v_texcoord;
-layout(location=VS_OUTPUT_TEXCOORD2) out vec2 v_texcoord2;
+layout(location=VS_OUTPUT_TEXCOORD2) out vec2 v_texcoord2; 
 layout(location=VS_OUTPUT_NORMAL) out vec3 v_normal;
 layout(location=VS_OUTPUT_WORLDPOS) out vec3 v_worldpos;
 layout(location=VS_OUTPUT_TANGENT) out vec4 v_tangent;

@@ -5,7 +5,7 @@
 #include "uniforms.txt"
 #include "perlin.h"
 
-
+ 
 
 layout(set=0,binding=BASE_TEXTURE_SLOT) uniform texture2DArray baseColorTexture;
 layout(set=0,binding=CLAMPING_MIPMAP_SAMPLER_SLOT) uniform sampler texSampler;

@@ -53,9 +53,9 @@ void setup(Globals* globs)
     );
     
     globs->clampingMipSampler = new Sampler(globs->ctx,
-        VK_FILTER_LINEAR,
-        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-        true
+            VK_FILTER_LINEAR,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            true
     );
 
     globs->camera = new Camera(

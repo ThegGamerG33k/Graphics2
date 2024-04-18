@@ -1,6 +1,6 @@
 
 //This header can be used from GLSL or C++
-
+ 
 
 // xoshiro algorithm from https://prng.di.unimi.it/xoroshiro64starstar.c
 // It has this copyright notice:

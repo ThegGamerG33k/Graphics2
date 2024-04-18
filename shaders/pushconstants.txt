@@ -1,5 +1,5 @@
 layout(push_constant,row_major) uniform pushConstants {
-    mat4 worldMatrix;
+    mat4 worldMatrix; 
     vec4 baseColorFactor;
     vec3 emissiveFactor;
     float normalFactor;

@@ -6,7 +6,7 @@
 layout(location=0) in vec2 texcoord;
 
 layout(location=0) out vec4 color;
-
+ 
 layout(set=0,binding=NEAREST_SAMPLER_SLOT) uniform sampler texSampler;
 layout(set=0,binding=BASE_TEXTURE_SLOT) uniform texture2DArray baseColorTexture;
 

@@ -9,7 +9,7 @@ layout(location=VS_OUTPUT_TEXCOORD) in vec2 texcoord;
 layout(location=VS_OUTPUT_TEXCOORD2) in vec2 texcoord2;
 layout(location=VS_OUTPUT_NORMAL) in vec3 normal;
 layout(location=VS_OUTPUT_WORLDPOS) in vec3 worldPosition;
-layout(location=VS_OUTPUT_TANGENT) in vec4 tangent;
+layout(location=VS_OUTPUT_TANGENT) in vec4 tangent; 
 
 layout(location=0) out vec4 color;
 

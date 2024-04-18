@@ -4,7 +4,7 @@
 
 #include "importantconstants.h"
 #include "pushconstants.txt"
-#include "uniforms.txt"
+#include "uniforms.txt" 
 
 layout(location=VS_INPUT_TEXCOORD) in vec2 texcoord;
 layout(set=0,binding=BILLBOARD_TEXTURE_SLOT) uniform
