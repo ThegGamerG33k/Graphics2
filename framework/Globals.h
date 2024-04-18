@@ -20,7 +20,11 @@ class DescriptorSetLayout;
 class DescriptorSet;
 class DescriptorSetFactory;
 class PipelineLayout;
+class Mesh;
 class Image;
+class GraphicsPipeline;
+class BlitSquare;
+class BillboardCollection;
 
 
 namespace gltf{
@@ -58,4 +62,12 @@ class Globals{
     Image* envmapImage;
     Image* skyboxImage;
     gltf::Mesh* skyboxCube;
+    Sampler* clampingMipSampler;
+    Framebuffer* offscreen;
+    GraphicsPipeline* blitPipe;
+    BlitSquare* blitSquare;
+    BillboardCollection* billboardCollection;
+    GraphicsPipeline* pipelineDrawBillboards;
+
+    float elapsed = 0.0f;
 };

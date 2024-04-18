@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include "gltf.h"
 #include "Text.h"
+#include "BillboardCollection.h"
 
 void setup(Globals* globs)
 {
@@ -49,6 +50,12 @@ void setup(Globals* globs)
             VK_FILTER_LINEAR,
             VK_SAMPLER_ADDRESS_MODE_REPEAT,
             true
+    );
+    
+    globs->clampingMipSampler = new Sampler(globs->ctx,
+        VK_FILTER_LINEAR,
+        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+        true
     );
 
     globs->camera = new Camera(
@@ -101,25 +108,28 @@ void setup(Globals* globs)
     globs->descriptorSetLayout = new DescriptorSetLayout(
         globs->ctx,
         {
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                UNIFORM_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                NEAREST_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                LINEAR_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLER,
-                                MIPMAP_SAMPLER_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                BASE_TEXTURE_SLOT ),
-            DescriptorSetEntry( VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                EMISSIVE_TEXTURE_SLOT ),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                UNIFORM_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER,
+                                NEAREST_SAMPLER_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER,
+                                LINEAR_SAMPLER_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER,
+                                MIPMAP_SAMPLER_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLER,
+                                CLAMPING_MIPMAP_SAMPLER_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+                                BASE_TEXTURE_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+                                EMISSIVE_TEXTURE_SLOT),
             DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
                                 NORMAL_TEXTURE_SLOT),
             DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
                                 METALLICROUGHNESS_TEXTURE_SLOT),
             DescriptorSetEntry(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                ENVMAP_TEXTURE_SLOT)
-
+                                ENVMAP_TEXTURE_SLOT),
+            DescriptorSetEntry(VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
+                    BILLBOARD_TEXTURE_SLOT)
         }
     );
 
@@ -150,6 +160,46 @@ void setup(Globals* globs)
         PipelineOption{ .shader = ShaderManager::load("shaders/sky.vert") },
         PipelineOption{ .shader = ShaderManager::load("shaders/sky.frag") },
         PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
+    );
+
+    globs->blitPipe = new GraphicsPipeline(
+        globs->ctx,
+        "blit pipe",
+        globs->pipelineLayout,
+        PipelineOption{ .shader = ShaderManager::load("shaders/blit.vert") },
+        PipelineOption{ .shader = ShaderManager::load("shaders/blit.frag") },
+        PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
+    );
+
+    globs->elapsed = 0.0f;
+
+    globs->pipelineDrawBillboards = new GraphicsPipeline(
+        globs->ctx,
+        "draw billboards",
+        globs->pipelineLayout,
+        PipelineOption{ .shader = ShaderManager::load("shaders/billboard.vert") },
+        PipelineOption{ .shader = ShaderManager::load("shaders/fire.frag") },
+        PipelineOption{ .depthWriteEnable = VK_FALSE },
+        PipelineOption{ .blendEnable = VK_TRUE },
+        PipelineOption{ .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA },
+        PipelineOption{ .dstColorBlendFactor = VK_BLEND_FACTOR_ONE },   //<---
+        PipelineOption{ .vertexInputState = globs->vertexManager->inputState }
+    );
+
+    std::vector<vec4> Bill(1024);
+    for (unsigned int i = 0; i < 1024; i++)
+    {
+        Bill[i] = vec4(20.98, -0.6265, -3.539, 0);
+    } //vec4(-20.98, -0.6265, -3.539, 0);
+
+
+    globs->billboardCollection = new BillboardCollection(
+        globs->ctx,
+        globs->vertexManager,
+        {
+            Bill
+        },
+        ImageManager::load("assets/fireramp.jpg")
     );
 
     globs->descriptorSetFactory = new DescriptorSetFactory(
@@ -206,6 +256,7 @@ void setup(Globals* globs)
     globs->descriptorSet->setSlot( NEAREST_SAMPLER_SLOT, globs->nearestSampler->sampler );
     globs->descriptorSet->setSlot( LINEAR_SAMPLER_SLOT, globs->linearSampler->sampler );
     globs->descriptorSet->setSlot( MIPMAP_SAMPLER_SLOT, globs->mipSampler->sampler );
+    globs->descriptorSet->setSlot(CLAMPING_MIPMAP_SAMPLER_SLOT, globs->clampingMipSampler->sampler);
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
     globs->mouseLook = true;

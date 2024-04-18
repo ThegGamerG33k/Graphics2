@@ -13,19 +13,21 @@ layout(location=VS_INPUT_TANGENT) in vec4 tangent;
 layout(location=VS_OUTPUT_TEXCOORD) out vec2 v_texcoord;
 layout(location=VS_OUTPUT_TEXCOORD2) out vec2 v_texcoord2;
 layout(location=VS_OUTPUT_NORMAL) out vec3 v_normal;
-layout(location=VS_OUTPUT_TANGENT) out vec4 v_tangent;
 layout(location=VS_OUTPUT_WORLDPOS) out vec3 v_worldpos;
+layout(location=VS_OUTPUT_TANGENT) out vec4 v_tangent;
 
 void main(){
     vec4 p = vec4(position,1.0);
     p = p * worldMatrix;
     v_worldpos = p.xyz;
+    
+    if( doingReflections == 1 )
+        p = p * reflectionMatrix;
+   
     p = p * viewProjMatrix;
     gl_Position = p;
     v_texcoord=texcoord;
     v_texcoord2=texcoord2;
-    vec4 N = vec4(normal,0.0);
-    N = N * worldMatrix;
-    v_normal = normal;  //N.xyz;
+    v_normal = normal;
     v_tangent = tangent;
 }

@@ -5,6 +5,7 @@
 #include "gltf.h"
 #include "Text.h"
 #include "..\shaders\importantconstants.h"
+#include "BillboardCollection.h"
 
 void draw(Globals* globs)
 {
@@ -40,6 +41,7 @@ void draw(Globals* globs)
     globs->uniforms->set( "lightColorAndIntensity", globs->lightColorAndIntensity );
     globs->uniforms->set( "cosSpotAngles", globs->cosSpotAngles );
     globs->uniforms->set( "spotDirection", globs->spotDirection );
+    globs->uniforms->set("elapsed", globs->elapsed);
 
     globs->uniforms->bind(cmd,globs->descriptorSet);
 
@@ -60,6 +62,13 @@ void draw(Globals* globs)
         globs->descriptorSet,
         globs->pushConstants
     );
+
+    globs->pipelineDrawBillboards->use(cmd);
+    //can translate entire billboard system around as a unit
+    //with worldMatrix
+    globs->pushConstants->set(cmd, "worldMatrix",
+        mat4::identity());
+    globs->billboardCollection->draw(cmd, globs->descriptorSet);
 
     globs->text->draw(cmd);
 
