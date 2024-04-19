@@ -29,7 +29,13 @@
 *.out
 *.app
 
+*.log
+*.recipe
+*.ilk
+*.pdb
+*.enc
+*.enc
+*.idb
 
 .vs
-Debug
 lab.zip
